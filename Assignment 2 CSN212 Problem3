@@ -1,1 +1,88 @@
 
+#include<iostream>
+#include<vector>
+#include<map>
+#include<queue>
+#include<sstream>
+#include<math.h>
+#include<set>
+#include<fstream>
+#include<algorithm>
+#include<cstring>
+#include<cassert>
+#define oo (int)13e7
+#define s(n) scanf("%d",&n)
+#define sl(n) scanf("%lld",&n)
+#define sf(n) scanf("%lf",&n)
+#define fill(a,v) memset(a, v, sizeof a)
+#define For(i,s,e) for(int i=s; i < e; i++)
+#define ull unsigned long long
+#define ll long long
+#define bitcount __builtin_popcount
+#define all(x) x.begin(), x.end()
+#define pb( z ) push_back( z )
+using namespace std;
+ 
+ 
+const int mxn = 20007;
+int a[mxn];
+int p[mxn];
+int b[mxn];
+ 
+int find_lis(int lo, int len)
+{
+	int u, v;
+ 
+	int bsz = 0;
+	b[ bsz++] = lo;
+ 
+	for (int i = lo+1; i < lo + len; i++) {
+		if (a[ b[ bsz-1] ] < a[i]) {
+			p[i] = b[ bsz - 1 ];
+			b[ bsz++] = i;
+			continue;
+		}
+ 
+		for (u = 0, v = bsz-1; u < v;)  {
+			int c = (u + v) / 2;
+			if (a[b[c]] < a[i]) u=c+1; else v=c;
+		}
+ 
+		if (a[i] < a[b[u]]) {
+			if (u > 0) p[i] = b[u-1];
+			b[u] = i;
+		}	
+	}
+ 
+	return bsz;
+}
+ 
+ 
+int main()
+{
+	int runs;
+	s( runs );
+	while( runs -- )
+	{
+		int n;
+		s( n );
+		for(int i=0; i  < n; i++)
+		{
+			s( a[i] );
+			a[i+n] = a[i];
+		}
+		
+		vector< pair<int, int> > jin;
+		for(int i=0; i < n; ++i)
+		jin.pb( make_pair( a[i], i ) );
+		sort( jin.begin(), jin.end() );
+		
+		int best = 1;
+		// 1e7 / ( 1e4 log ( 1e4 ) )
+		for(int i=0; i < min( 108, (int)jin.size() ); i++)
+		best = max( best, find_lis( jin[i].second, n ) );
+		
+		printf("%d\n", best );
+	}
+	return 0;
+}
