@@ -1,1 +1,58 @@
 
+#include<bits/stdc++.h>
+using namespace std;
+int a[10];
+class AvoidRoads
+{
+   public:
+       	long long numWays(int width, int height,vector<string> bad)
+       	{
+
+      long long dp[102][102];
+      short mark[103][103][2];
+      int a[4];
+      int si=bad.size();
+ for(int k=0;k<si;k++)
+ {
+      a[0]=a[1]=a[2]=a[3]=0;
+     string z=bad[k];
+     int s=z.length();
+     int j=0;
+    for(int i=0;i<s;i++)
+    {
+        char c=z[i];
+        if(c==' ')
+        j++;
+        else a[j]=a[j]*10+(c-'0');
+    }
+    if((a[0]-a[2])==0) //up 1,same width
+    {
+        if(a[1]>a[3])
+            mark[a[2]][a[3]][1]=1;
+        else mark[a[0]][a[1]][1]=1;
+    }
+    else  // left,same height
+    {
+        if(a[0]>a[2])
+            mark[a[2]][a[3]][0]=1;
+        else
+            mark[a[0]][a[1]][0]=1;
+    }
+
+ }
+
+    dp[0][0]=1;
+    for(int i=0;i<=width;i++)
+    {
+        for(int j=0;j<=height;j++)
+        {
+            if(i-1>=0 && mark[i-1][j][0]==0)
+              dp[i][j]=dp[i-1][j];
+            if(j-1>=0 && mark[i][j-1][1]==0)
+                dp[i][j]+=dp[i][j-1];
+        }
+    }
+    return dp[width][height];
+       	}
+
+};
