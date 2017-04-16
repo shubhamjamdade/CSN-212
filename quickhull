@@ -1,0 +1,111 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+struct co_ordinates_of_points
+{
+	int x;
+	int y;
+};
+
+bool orientation(co_ordinates_of_points start, co_ordinates_of_points mid, co_ordinates_of_points end_point)
+{
+    int val = (mid.y - start.y)*(end_point.x - mid.x) - (mid.x - start.x)*(end_point.y - mid.y);
+
+	 if (val < 0)
+        return 1;
+    else
+		return 0;
+}
+
+void answer(vector<co_ordinates_of_points>ar)
+{
+	for(int i=0;i<ar.size();i++)
+	{
+		cout<<"("<<ar[i].x<<","<<ar[i].y<<")  ";
+	}
+	cout<<""""<<"\n";
+}
+
+vector<co_ordinates_of_points> answer_calculation(co_ordinates_of_points A, co_ordinates_of_points B, vector<co_ordinates_of_points> points)
+{
+	vector<co_ordinates_of_points> random;
+
+	for(int i=0;i<points.size();i++)
+	{
+		if(orientation(A,B,points[i]))
+			random.push_back(points[i]);
+	}
+
+	return random;
+}
+
+void quick_hull(vector<co_ordinates_of_points> points, co_ordinates_of_points A, co_ordinates_of_points B)
+{
+	if(points.size()==0)
+		return;
+
+	double dist = 0,k;
+	int ans;
+
+	for(int i=0;i<points.size();i++)
+	{
+		int x = points[i].x;
+		int y = points[i].y;
+
+		k = abs((B.y-A.y)*x-(B.x-A.x)*y+B.x*A.y-B.y*A.x)/sqrt(pow(B.y-A.y,2)+pow(B.x-A.x,2));
+
+		if(k>dist)
+		{
+			dist = k;
+			ans = i;
+		}
+	}
+
+	cout<<"selected_array_points of co_ordinates_of_pointsare ("<<points[ans].x<<","<<points[ans].y<<") "<<"\n";
+
+	vector<co_ordinates_of_points> points1 = answer_calculation(A,points[ans],points);
+	vector<co_ordinates_of_points> points2 = answer_calculation(points[ans],B,points);
+
+
+
+	quick_hull(points1,A,points[ans]);
+	quick_hull(points2,points[ans],B);
+}
+
+int main()
+{
+	int n;
+	cin>>n;
+	vector<co_ordinates_of_points> selected_array_points(n);
+	for(int i=0;i<n;i++)
+	{
+		cout<<"Enter x coordinate"<<i+1<<": ";
+		cin>>selected_array_points[i].x;
+		cout<<"Enter y coordinate"<<i+1<<": ";
+		cin>>selected_array_points[i].y;
+	}
+
+	cout<<""<<"\n";
+
+	co_ordinates_of_points leftmost = selected_array_points[0];
+    co_ordinates_of_points rightmost = selected_array_points[0];
+
+	for(int i=1;i<n;i++)
+    {
+        if(leftmost.x>selected_array_points[i].x)
+        	leftmost=selected_array_points[i];
+        if(rightmost.x<selected_array_points[i].x)
+			rightmost=selected_array_points[i];
+	}
+
+	cout<<"co-ordinates of nodes("<<leftmost.x<<","<<leftmost.y<<")"<<"\n";
+	vector<co_ordinates_of_points> leftpoints =
+	answer_calculation(leftmost,rightmost,selected_array_points);
+
+	quick_hull(leftpoints,leftmost,rightmost);
+
+	cout<<"co-ordinates of nodes ("<<rightmost.x<<","<<rightmost.y<<") "<<"\n";
+	vector<co_ordinates_of_points> rightpoints = answer_calculation(rightmost,leftmost,selected_array_points);
+
+	quick_hull(rightpoints,rightmost,leftmost);
+}
